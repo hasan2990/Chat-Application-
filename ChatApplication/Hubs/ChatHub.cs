@@ -34,6 +34,9 @@ namespace ChatApplication.Hubs
             {
                 return base.OnDisconnectedAsync(exception);
             }
+
+            _connections.Remove(Context.ConnectionId);
+
             Clients.Group(roomConnection.Room!)
                 .SendAsync("ReceiveMessage", "Lets Program Bot", $"{roomConnection.User} has left the group.");
             SendConnectedUser(roomConnection.Room!);

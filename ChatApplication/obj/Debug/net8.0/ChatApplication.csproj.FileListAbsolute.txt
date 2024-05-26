@@ -30,3 +30,4 @@ D:\Hasan\ChatApplication\ChatApplication\obj\Debug\net8.0\refint\ChatApplication
 D:\Hasan\ChatApplication\ChatApplication\obj\Debug\net8.0\ChatApplication.pdb
 D:\Hasan\ChatApplication\ChatApplication\obj\Debug\net8.0\ChatApplication.genruntimeconfig.cache
 D:\Hasan\ChatApplication\ChatApplication\obj\Debug\net8.0\ref\ChatApplication.dll
+D:\Hasan\ChatApplication\ChatApplication\obj\Debug\net8.0\ChatApplication.sourcelink.json
