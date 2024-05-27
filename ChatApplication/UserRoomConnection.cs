@@ -4,5 +4,7 @@
     {
         public string? User { get; set; }
         public string? Room { get; set; }
+        public bool isAdmin { get; set; }
+       
     }
 }

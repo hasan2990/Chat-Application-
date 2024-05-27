@@ -7,53 +7,59 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ChatService {
 
-  public connection : signalR.HubConnection = new signalR.HubConnectionBuilder()
-  .withUrl("https://localhost:7012/chat", {
-    skipNegotiation: true,
-    transport: signalR.HttpTransportType.WebSockets
-  })
-  .configureLogging(signalR.LogLevel.Information)
-  .build();
+  public hubConnection: signalR.HubConnection = new signalR.HubConnectionBuilder()
+    .withUrl("https://localhost:7012/chat", {
+      skipNegotiation: true,
+      transport: signalR.HttpTransportType.WebSockets
+    })
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
 
-  public messages$ = new BehaviorSubject<any[]>([]);
   public connectedUsers$ = new BehaviorSubject<string[]>([]);
-  public messages: any[] = [];
+  public privateMessages$ = new BehaviorSubject<any[]>([]);
+  public privateMessages: any[] = [];
   public users: string[] = [];
 
   constructor() {
     this.start();
-    this.connection.on("ReceiveMessage", (user: string, message: string, messageTime: string)=>{
-      this.messages = [...this.messages, {user, message, messageTime} ];
-      this.messages$.next(this.messages);
+
+    this.hubConnection.on("ReceivePrivateMessage", (user: string, message: string, messageTime: string) => {
+      this.privateMessages = [...this.privateMessages, { user, message, messageTime }];
+      this.privateMessages$.next(this.privateMessages);
     });
 
-    this.connection.on("ConnectedUser", (users: any)=>{
+    this.hubConnection.on("ConnectedUser", (users: any) => {
       this.connectedUsers$.next(users);
     });
   }
 
-  //start connection
-  public async start(){
+  public async start() {
     try {
-      await this.connection.start();
+      await this.hubConnection.start();
       console.log("Connection is established!")
     } catch (error) {
       console.log(error);
     }
   }
 
-  //Join Room
-  public async joinRoom(user: string, room: string){
-    return this.connection.invoke("JoinRoom", {user, room})
+  public async joinRoom(user: string, room: string, isAdmin: boolean) {
+    console.log("JoinRoom is called", user, room, isAdmin);
+    return this.hubConnection.invoke('JoinRoom', { user, room, isAdmin });
   }
 
-  // Send Messages
-  public async sendMessage(message: string){
-    return this.connection.invoke("SendMessage", message)
+  public async sendPrivateMessageToAdmin(user: string, message: string) {
+    console.log("sendPrivateMessageToAdmin is called", user, message);
+    return this.hubConnection.invoke('SendPrivateMessageToAdmin', user, message)
+      .catch(err => console.error(err));
   }
 
-  //leave
-  public async leaveChat(){
-    return this.connection.stop();
+  public leaveChat() {
+    return this.hubConnection.stop();
+  }
+
+  public kickUser(user: string): Promise<void> {
+    console.log("kickUser is called");
+    return this.hubConnection.invoke('KickUser', user)
+      .catch(err => console.error(err));
   }
 }

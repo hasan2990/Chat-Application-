@@ -11,6 +11,7 @@ import { ChatService } from '../chat.service';
 export class JoinRoomComponent implements OnInit {
 
   joinRoomForm!: FormGroup;
+  isAdmin: boolean = false;
   fb = inject(FormBuilder);
   router = inject(Router);
   chatService = inject(ChatService);
@@ -18,23 +19,23 @@ export class JoinRoomComponent implements OnInit {
   ngOnInit(): void {
     this.joinRoomForm = this.fb.group({
       user: ['', Validators.required],
-      room: ['', Validators.required]
+      room: ['', Validators.required],
+      isAdmin: [false]
     });
   }
 
   joinRoom(){
     console.log(this.joinRoomForm.value);
-    const {user, room} = this.joinRoomForm.value;
-    sessionStorage.setItem("user", user);
-    sessionStorage.setItem("room", room);
-    this.chatService.joinRoom(user, room)
+    const {user, room, isAdmin} = this.joinRoomForm.value;
+    localStorage.setItem("user", user);
+    localStorage.setItem("room", room);
+    localStorage.setItem("isAdmin", isAdmin);
+    this.chatService.joinRoom(user, room, isAdmin)
     .then(()=>{
       console.log("navigate to chat component.");
       this.router.navigate(['chat']);
     }).catch((err)=>{
       console.log(err);
     })
-
   }
-
 }

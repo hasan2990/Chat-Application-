@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IDictionary<string, UserRoomConnection>>(opt =>
     new Dictionary<string, UserRoomConnection>());
+builder.Services.AddSingleton<IDictionary<string, string>>(opt =>
+    new Dictionary<string, string>());
 
 // Configure CORS
 builder.Services.AddCors(options =>
